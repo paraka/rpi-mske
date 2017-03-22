@@ -1,0 +1,34 @@
+**************************
+Raspberri pi boot sequence
+**************************
+
+1) When the Raspberry Pi is first turned on, the ARM core is off, and the GPU core is on. At this point the SDRAM is disabled.
+2) The GPU starts executing the first stage bootloader, which is stored in ROM on the SoC. The first stage bootloader reads the SD card, 
+and loads the second stage bootloader (bootcode.bin) into the L2 cache, and runs it.
+3) bootcode.bin enables SDRAM, and reads the third stage bootloader (loader.bin) from the SD card into RAM, and runs it.
+4) loader.bin reads the GPU firmware (start.elf).
+5) start.elf reads config.txt cmdline.txt and kernel.img.
+
+******
+STAGES
+******
+
+1) Stage 1 boot is in the on-chip ROM. Loads Stage 2 in the L2 cache
+2) Stage 2 is bootcode.bin. Enables SDRAM and loads Stage 3
+3) Stage 3 is loader.bin. It knows about the .elf format and loads start.elf
+4) start.elf loads kernel.img. It then also reads config.txt, cmdline.txt and bcm2835.dtb If the dtb file exists, 
+it is loaded at 0×100 & kernel @ 0×8000 If disable_commandline_tags is set it loads kernel @ 0x0 Otherwise it loads kernel @ 0x8000 and put ATAGS at 0x100
+5) kernel.img is then run on the ARM.
+
+Everything is run on the GPU until kernel.img is loaded on the ARM.
+
+See boot_sequence.png for more info.
+
+*****************************************
+Info to send to kernel via CPU registers
+*****************************************
+
+The Linux kernel expects to get the following information via the CPU registers:
+• CPU register 0 (r0) must be 0
+• CPU register 1 (r1) must contain the ARM Linux machine type
+• CPU register 2 (r2) must contain the physical address of the Linux parameter list (atags)
