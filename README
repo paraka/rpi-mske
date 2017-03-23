@@ -1,0 +1,7 @@
+************************************
+Raspberry PI Most Stupid Kernel Ever 
+************************************
+
+A simple kernel from scratch is something that I've always wanted to do.
+This not pretend to be something big but big enough to undertand how a lot of stuff really works.
+Because I have a Raspberry Pi model B this is the target platform.
