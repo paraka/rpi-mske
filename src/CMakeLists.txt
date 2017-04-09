@@ -15,9 +15,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
 set(BOOT_SRC "init/boot.s")
+set(GPIO_SRC "gpio/gpio.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
+    ${GPIO_SRC}
     ${KERNEL_MAIN_FILE})
 
 add_executable(${BINARY_NAME} ${KERNEL_SOURCES})
