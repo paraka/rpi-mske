@@ -4,6 +4,8 @@ project(rpi-mske C ASM)
 
 set(BINARY_NAME rpi-mske)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -O2 -Wall -Wextra -nostdlib")
