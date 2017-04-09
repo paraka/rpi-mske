@@ -2,12 +2,14 @@
 #include <stdbool.h>
 #endif
 #include <stddef.h>
-#include <stdint.h>
+#include <common/types.h>
+#include <common/peripherals.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
-void kernel_main(uint32_t r0, uint32_t r1, uint32_t atags)
+
+void kernel_main(u32 r0, u32 r1, u32 atags)
 {
 	(void) r0;
 	(void) r1;
