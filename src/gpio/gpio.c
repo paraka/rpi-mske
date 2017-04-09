@@ -45,6 +45,21 @@ void set_gpio_state(u32 pin, bool state)
             : GPIO_CLR0)[pin / 32] = 1 << (pin % 32);
 }
 
+/* 
+ * The GPIO Pull-up/down Clock Registers control the actuation of internal pull-downs on
+ * the respective GPIO pins. These registers must be used in conjunction with the GPPUD
+ * register to effect GPIO Pull-up/down changes. The following sequence of events is
+ * required:
+ *  1. Write to GPPUD to set the required control signal (i.e. Pull-up or Pull-Down or neither
+ *     to remove the current Pull-up/down)
+ *  2. Wait 150 cycles – this provides the required set-up time for the control signal
+ *  3. Write to GPPUDCLK0/1 to clock the control signal into the GPIO pads you wish to
+ *     modify – NOTE only the pads which receive a clock will be modified, all others will
+ *     retain their previous state.
+ *  4. Wait 150 cycles – this provides the required hold time for the control signal
+ *  5. Write to GPPUD to remove the control signal
+ *  6. Write to GPPUDCLK0/1 to remove the clock
+*/
 void set_gpio_pull_up_down(u32 pin, enum PullUpDown fn)
 {
     volatile u32 *pud = get_gpio_address(GPIO_PUD);
