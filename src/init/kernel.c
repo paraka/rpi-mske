@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #endif
 #include <stddef.h>
-#include <common/types.h>
+#include <types.h>
 #include <common/peripherals.h>
 
 #if defined(__cplusplus)

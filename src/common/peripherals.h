@@ -1,7 +1,7 @@
 #ifndef __PERIPHERALS_H_
 #define __PERIPHERALS_H_
 
-#include <common/types.h>
+#include <types.h>
 
 // Raspberry pi peripherals base address
 #define PERIPHERALS_BASE    0x20000000
