@@ -10,7 +10,27 @@
 /* relative to PERIPhERALS_BASE */
 #define GPIO_BASE   0x200000
 
-enum GPIO_Funcs { INPUT, OUTPUT };
+/* FSEL9 -> bits 29-27 */
+/* 000 = GPIO Pin 9 is an input
+ * 001 = GPIO Pin 9 is an output
+ * 100 = GPIO Pin 9 takes alternate function 0
+ * 101 = GPIO Pin 9 takes alternate function 1
+ * 110 = GPIO Pin 9 takes alternate function 2
+ * 111 = GPIO Pin 9 takes alternate function 3
+ * 011 = GPIO Pin 9 takes alternate function 4
+ * 010 = GPIO Pin 9 takes alternate function 5
+ */
+enum GPIO_Funcs 
+{ 
+    INPUT   = 0x000, 
+    OUTPUT  = 0x001,
+    FN0     = 0x100,
+    FN1     = 0x101,
+    FN2     = 0x110,
+    FN3     = 0x111,
+    FN4     = 0x011,
+    FN5     = 0x010
+};
 
 void set_gpio_function(u32 pin, enum GPIO_Funcs fn); 
 void set_gpio_state(u32 pin, bool state);
