@@ -17,17 +17,19 @@ set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 set(BOOT_SRC "init/boot.s")
 set(GPIO_SRC "gpio/gpio.c")
 set(LED_SRC "led/led.c")
+set(UART_SRC "uart/uart.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
     ${GPIO_SRC}
     ${LED_SRC}
+    ${UART_SRC}
     ${KERNEL_MAIN_FILE})
 
 add_executable(${BINARY_NAME} ${KERNEL_SOURCES})
 
 add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
-                COMMAND ${CMAKE_OBJCOPY} ${CMAKE_BINARY_DIR}/src/${BINARY_NAME} -O binary ${BINARY_NAME}.img
+                COMMAND ${CMAKE_OBJCOPY} ${CMAKE_BINARY_DIR}/src/${BINARY_NAME} -O binary kernel.img
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Convert the ELF output file to a binary image")

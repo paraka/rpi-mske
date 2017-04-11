@@ -8,7 +8,7 @@
 #include <common/peripherals.h>
 
 /* relative to PERIPhERALS_BASE */
-#define GPIO_BASE   0x200000
+#define GPIO_BASE   (PERIPHERALS_BASE + 0x200000)
 
 /* FSEL9 -> bits 29-27 */
 /* 000 = GPIO Pin 9 is an input

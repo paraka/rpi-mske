@@ -6,9 +6,14 @@
 // Raspberry pi peripherals base address
 #define PERIPHERALS_BASE    0x20000000
 
-inline volatile u32 * get_register_address(u32 offset)
+inline void mmio_write(u32 reg, u32 data)
 {
-    return (volatile u32 *)(PERIPHERALS_BASE + offset);
+    *(volatile u32 *)reg = data;
+}
+ 
+inline u32 mmio_read(u32 reg)
+{
+    return *(volatile u32 *)reg;
 }
 
 #endif // __PERIPHERALS_H_

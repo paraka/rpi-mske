@@ -7,6 +7,7 @@
 #include <common/delay.h>
 #include <gpio/gpio.h>
 #include <led/led.h>
+#include <uart/uart.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -33,4 +34,9 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     init_led();
     blink(3, 0x10000);
+    init_uart();
+    write("Hello new kernel!", sizeof("Hello new kernel!"));
+
+    while (true)
+        uart_putc(uart_getc());
 }

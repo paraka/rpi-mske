@@ -10,4 +10,6 @@ typedef signed int s32;
 typedef unsigned long long u64;
 typedef signed long long s64;
 
+typedef unsigned int size_t;
+
 #endif // __TYPES_H_
