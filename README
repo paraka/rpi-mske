@@ -8,22 +8,22 @@ Because I have a Raspberry Pi model B this is the target platform.
 
 = HOW TO COMPILE =
 
-You need to tnstall arm crosscompiler arm-none-eabi-gcc package to be able to compile the sources.
+You need to install arm crosscompiler arm-none-eabi-gcc package to be able to compile the sources.
 
 $ mkdir build
 $ cd build
 $ cmake -DCMAKE_TOOLCHAIN_FILE=/absolute_path_to/rpi-mske/toolchain/toolchain-arm-none-eabi-rpi.cmake ..
 $ make
 
-Binary rpi-mske.img file should be created.
+Binary kernel.img file should be created.
 
 = HOW TO DEPLOY IN THE TARGET =
 
-Generated rpi-mske.img is the image you have to use as your kernel image.
+Generated kernel.img is the image you have to use as your kernel image.
 
 Create a sdcard with a fat partition and add files included in boot directory.
-Add rpi-mske.img named as kernel.img in the partition too.
+Add kernel.img in the partition too.
 
-Boot your pi connected with ftdi cable to gpio and ue minicom or other terminal program to view boot process.
+Boot your pi connected with ftdi cable to gpio and use minicom or other terminal program to view boot process.
 
 Enjoy!
