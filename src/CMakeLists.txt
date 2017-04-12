@@ -5,7 +5,7 @@ project(rpi-mske C ASM)
 set(BINARY_NAME rpi-mske)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/klibc)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/klibc/include)
 
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld)
 
