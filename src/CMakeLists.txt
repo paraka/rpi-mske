@@ -15,6 +15,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
 set(BOOT_SRC "init/boot.s")
+set(COMMON_SRC "common/device.c")
 set(GPIO_SRC "gpio/gpio.c")
 set(LED_SRC "led/led.c")
 set(UART_SRC "uart/uart.c")
@@ -22,6 +23,7 @@ set(KERNEL_MAIN_FILE "init/kernel.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
+    ${COMMON_SRC}
     ${GPIO_SRC}
     ${LED_SRC}
     ${UART_SRC}
