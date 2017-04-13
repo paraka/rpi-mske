@@ -53,7 +53,7 @@ typedef struct _device_table_entry
 
 extern device_table_entry_s device_table[MAX_DEVICES];
 
-u8 device_register(struct dev_operations *dev_ops);
+int device_register(struct dev_operations *dev_ops);
 mske_ret_code_t device_read(u8 dev_id, void *buffer, size_t nbytes);
 mske_ret_code_t device_write(u8 dev_id, void *buffer, size_t nbytes);
 mske_ret_code_t device_init(void);

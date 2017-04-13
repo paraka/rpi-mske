@@ -4,7 +4,7 @@ static int num_devices = 0;
 
 device_table_entry_s device_table[MAX_DEVICES];
 
-u8 device_register(struct dev_operations *dev_ops)
+int device_register(struct dev_operations *dev_ops)
 {
     u8 dev_id;
 
