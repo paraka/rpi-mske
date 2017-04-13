@@ -5,6 +5,7 @@
 #include <types.h>
 #include <common/peripherals.h>
 #include <common/delay.h>
+#include <common/panic.h>
 #include <gpio/gpio.h>
 #include <led/led.h>
 #include <uart/uart.h>
@@ -12,6 +13,8 @@
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
+
+int uart_dev_id;
 
 static void blink(u8 ntimes, u32 tdelay)
 {
@@ -34,9 +37,20 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     init_led();
     blink(3, 0x10000);
-    init_uart();
-    write("Hello new kernel!", sizeof("Hello new kernel!"));
 
+    device_init();
+    
+    if ((uart_dev_id = device_register(&device_operations)) < 0)
+    {
+        kernel_panic();
+    }
+
+    device_write(uart_dev_id, "Hello new kernel!", sizeof("Hello new kernel!"));
+
+    u8 buffer;
     while (true)
-        uart_putc(uart_getc());
+    {
+        device_read(uart_dev_id, &buffer, 1);
+        device_write(uart_dev_id, &buffer, 1);
+    }
 }
