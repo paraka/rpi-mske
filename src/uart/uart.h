@@ -1,11 +1,12 @@
 #ifndef __UART_H_
 #define __UART_H_
 
+#include <common/device.h>
 #include <types.h>
 
-void init_uart(void);
-void uart_putc(u8 c);
-void write(const char *buf, size_t len);
-u8 uart_getc(void);
+mske_ret_code_t uart_init(void);
+mske_ret_code_t uart_read(u8 dev_id, void *buffer, size_t nbytes);
+mske_ret_code_t uart_write(u8 dev_id, void *buffer, size_t nbytes);
+mske_ret_code_t uart_destroy(u8 dev_id);
 
 #endif // __UART_H_

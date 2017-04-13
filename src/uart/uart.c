@@ -39,7 +39,14 @@ enum
     FR_CTS = 1 << 0, // Clear To Send
 };
 
-void init_uart(void)
+struct dev_operations device_operations = {
+    uart_read,
+    uart_write,
+    uart_init,
+    uart_destroy,
+};
+
+mske_ret_code_t uart_init(void)
 {
     /* disable uart0 */
     mmio_write(UART0_CR, 0x00000000);
@@ -80,24 +87,51 @@ void init_uart(void)
 
     /* Enable UART0, receive & transfer part of UART */
     mmio_write(UART0_CR, (1 << 0) | (1 << 8) | (1 << 9));
+
+    return MSKE_SUCESS;
 }
 
-void uart_putc(u8 c)
+static void uart_putc(u8 c)
 {
     while(mmio_read(UART0_FR) & FR_TXFF) { }
 
     mmio_write(UART0_DR, c);
 }
 
-u8 uart_getc(void)
+static u8 uart_getc(void)
 {
     while(mmio_read(UART0_FR) & FR_RXFE) { }
 
     return mmio_read(UART0_DR);
 }
 
-void write(const char *buf, size_t len)
+mske_ret_code_t uart_write(u8 dev_id, void *buffer, size_t nbytes)
 {
-    for (size_t i = 0; i<len; i++)
+    dev_id = dev_id;
+
+    const u8 *buf = (const u8 *)buffer;
+
+    for (size_t i = 0; i<nbytes; i++)
         uart_putc(buf[i]);
+
+    return nbytes;
+}
+
+mske_ret_code_t uart_read(u8 dev_id, void *buffer, size_t nbytes)
+{
+    dev_id = dev_id;
+
+    u8 *buf = (u8 *)buffer;
+
+    while (nbytes--)
+        *buf++ = uart_getc();
+
+    return nbytes;
+}
+
+mske_ret_code_t uart_destroy(u8 dev_id)
+{
+    dev_id = dev_id;
+
+    return MSKE_SUCESS;
 }
