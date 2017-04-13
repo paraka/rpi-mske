@@ -27,18 +27,20 @@ enum
 
 void set_gpio_function(u32 pin, enum GPIO_Funcs fn)
 {
-    //volatile u32 *fsel = &(volatile u32 *)(GPIO_FSEL0[pin / 10]);
+    u32 reg = pin / 10;
     u32 shift = (pin % 10) * 3;
     u32 mask = ~(7 << shift);
-    mmio_write(GPIO_FSEL0, (*(volatile u32 *)GPIO_FSEL0 & mask) | (fn << shift));
-    //*fsel = (*fsel & mask) | (fn << shift);
+    u32 value = (mmio_read(((volatile u32 *)GPIO_FSEL0)[reg]) & mask) | (fn << shift);
+    mmio_write(((volatile u32 *)GPIO_FSEL0)[reg], value);
 }
 
 void set_gpio_state(u32 pin, bool state)
 {
+    u32 reg = pin / 32;
+
     /* set or clear */
-    state ? mmio_write(((volatile u32 *)GPIO_SET0)[pin / 32], (1 << (pin % 32)))
-            : mmio_write(((volatile u32 *)GPIO_CLR0)[pin / 32], (1 << (pin % 32)));
+    state ? mmio_write(((volatile u32 *)GPIO_SET0)[reg], (1 << (pin % 32)))
+            : mmio_write(((volatile u32 *)GPIO_CLR0)[reg], (1 << (pin % 32)));
 }
 
 /* 
