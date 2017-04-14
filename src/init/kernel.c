@@ -3,6 +3,7 @@
 #endif
 #include <stddef.h>
 #include <types.h>
+#include <init/meta.h>
 #include <common/peripherals.h>
 #include <common/delay.h>
 #include <common/panic.h>
@@ -27,6 +28,20 @@ static void blink(u8 ntimes, u32 tdelay)
     }
 }
 
+static void initial_message(u8 uart_dev_id)
+{
+    struct meta info;
+
+    get_build_info(&info);
+
+    /* TODO: Write prink routine attaching the uart */
+
+    device_write(uart_dev_id, "**** Welcome to rpi-mske kernel ****\n", 37);
+    device_write(uart_dev_id, "Build: ", 8);
+    device_write(uart_dev_id, (void *)info.VERSION, sizeof(info.VERSION));
+    device_write(uart_dev_id, "\n\n\n", 3);
+}
+
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
 	(void) r0;
@@ -45,7 +60,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
         kernel_panic();
     }
 
-    device_write(uart_dev_id, "Hello new kernel!", sizeof("Hello new kernel!"));
+    initial_message(uart_dev_id);
 
     u8 buffer;
     while (true)
