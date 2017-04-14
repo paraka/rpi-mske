@@ -10,10 +10,12 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/klibc/include)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -O2 -Wall -Wextra -nostdlib")
+set(CMAKE_C_LDFLAGS "${CMAKE_C_LDFLAGS} -lgcc")
 
 # Set the linker flags so that we use our "custom" linker script
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
+file(GLOB KLIBC_SRC  "klibc/src/*.c")
 set(BOOT_SRC "init/boot.s")
 set(COMMON_SRC "common/device.c" 
                "common/panic.c")
@@ -27,10 +29,12 @@ set(KERNEL_SOURCES
     ${COMMON_SRC}
     ${GPIO_SRC}
     ${LED_SRC}
+    ${KLIBC_SRC}
     ${UART_SRC}
     ${KERNEL_MAIN_FILE})
 
 add_executable(${BINARY_NAME} ${KERNEL_SOURCES})
+target_link_libraries(${BINARY_NAME} -lgcc)
 
 add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
                 COMMAND ${CMAKE_OBJCOPY} ${CMAKE_BINARY_DIR}/src/${BINARY_NAME} -O binary kernel.img

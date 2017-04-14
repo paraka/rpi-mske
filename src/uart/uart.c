@@ -1,6 +1,7 @@
 #include <common/peripherals.h>
 #include <gpio/gpio.h>
-#include "uart.h"
+#include <uart/uart.h>
+#include <common/io.h>
 
 #define UART0_BASE   (GPIO_BASE + 0x1000)
 
@@ -145,3 +146,10 @@ mske_ret_code_t uart_destroy(u8 dev_id)
 
     return MSKE_SUCESS;
 }
+
+static void printk_support(char c)
+{
+    uart_putc((u8)c);
+}
+
+BSP_output_char_function_type BSP_output_char = printk_support;
