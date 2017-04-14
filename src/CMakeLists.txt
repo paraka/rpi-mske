@@ -10,7 +10,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/klibc/include)
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/kernel.ld)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -O2 -Wall -Wextra -nostdlib")
-set(CMAKE_C_LDFLAGS "${CMAKE_C_LDFLAGS} -lgcc")
 
 # Set the linker flags so that we use our "custom" linker script
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
