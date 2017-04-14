@@ -14,11 +14,9 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
-int uart_dev_id;
-
 static void blink(u8 ntimes, u32 tdelay)
 {
-    int i = 0;
+    volatile int i = 0;
 
     for (i=0; i<ntimes; i++)
     {
@@ -35,12 +33,14 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 	(void) r1;
 	(void) atags;
 
+    int uart_dev_id;
+
     init_led();
     blink(3, 0x10000);
 
     device_init();
     
-    if ((uart_dev_id = device_register(&device_operations)) < 0)
+    if ((uart_dev_id = uart_register()) < 0)
     {
         kernel_panic();
     }

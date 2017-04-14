@@ -9,6 +9,8 @@
 
 #define ALL_INTERRUPTS  0x7FF
 
+int uart_dev_id;
+
 enum
 {
     UART0_DR     = (UART0_BASE + 0x00),
@@ -45,6 +47,14 @@ struct dev_operations device_operations = {
     uart_init,
     uart_destroy,
 };
+
+int uart_register(void)
+{
+    if ((uart_dev_id = device_register(&device_operations)) < 0)
+        return MSKE_ERR;
+    
+    return uart_dev_id;    
+}
 
 mske_ret_code_t uart_init(void)
 {
