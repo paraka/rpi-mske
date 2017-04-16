@@ -30,17 +30,20 @@ void set_gpio_function(u32 pin, enum GPIO_Funcs fn)
     u32 reg = pin / 10;
     u32 shift = (pin % 10) * 3;
     u32 mask = ~(7 << shift);
-    u32 value = (mmio_read(((volatile u32 *)GPIO_FSEL0)[reg]) & mask) | (fn << shift);
-    mmio_write(((volatile u32 *)GPIO_FSEL0)[reg], value);
+    volatile u32 *addr = (volatile u32 *)GPIO_FSEL0;
+    u32 old_value = mmio_read(addr[reg]);
+    u32 new_value = (old_value & mask) | (fn << shift);
+    mmio_write(addr[reg], new_value);
 }
 
 void set_gpio_state(u32 pin, bool state)
 {
     u32 reg = pin / 32;
+    
+    volatile u32 *addr = (state ? (volatile u32 *)GPIO_SET0 : (volatile u32 *)GPIO_CLR0);
 
     /* set or clear */
-    state ? mmio_write(((volatile u32 *)GPIO_SET0)[reg], (1 << (pin % 32)))
-            : mmio_write(((volatile u32 *)GPIO_CLR0)[reg], (1 << (pin % 32)));
+    mmio_write(addr[reg], (1 << (pin % 32)));
 }
 
 /* 
@@ -63,10 +66,12 @@ void set_gpio_pull_up_down(u32 pin, enum PullUpDown fn)
     mmio_write(GPIO_PUD, (u32)fn);
     delay(150);
 
-    pin < 32 ? mmio_write(GPIO_PUDCLK0, (1 << (pin % 32))) : mmio_write(GPIO_PUDCLK1, (1 << (pin % 32)));
+    volatile u32 *pud_addr = ((pin < 32) ? (volatile u32 *)GPIO_PUDCLK0 : (volatile u32 *)GPIO_PUDCLK1);
+
+    mmio_write(*pud_addr, (1 << (pin % 32)));
     delay(150);
 
     /* clear action and remove clock */
     mmio_write(GPIO_PUD, (u32)OFF);
-    pin < 32 ? mmio_write(GPIO_PUDCLK0, 0x00000000) : mmio_write(GPIO_PUDCLK1, 0x00000000);
+    mmio_write(*pud_addr, 0x00000000);
 }
