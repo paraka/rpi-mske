@@ -29,24 +29,23 @@ static void blink(u8 ntimes, u32 tdelay)
     }
 }
 
-static void initial_message()
+static void welcome_message()
 {
     struct meta info;
 
     get_build_info(&info);
 
-    /* TODO: Write prink routine attaching the uart */
-
     printk("**** Welcome to rpi-mske kernel ****\n");
-    printk("Build: %s ", info.VERSION);
-    printk("\n\n\n");
+    printk("Written by: %s\n", info.AUTHOR);
+    printk("Version: %s \n", info.VERSION);
+    printk("************************************\n\n");
 }
 
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
-	(void) r0;
-	(void) r1;
-	(void) atags;
+    (void) r0;
+    (void) r1;
+    (void) atags;
 
     int uart_dev_id;
 
@@ -60,7 +59,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
         kernel_panic();
     }
 
-    initial_message();
+    welcome_message();
 
     u8 buffer;
     while (true)
