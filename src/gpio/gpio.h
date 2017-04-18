@@ -22,14 +22,14 @@
  */
 enum GPIO_Funcs 
 { 
-    INPUT   = 0x000, 
-    OUTPUT  = 0x001,
-    FN0     = 0x100,
-    FN1     = 0x101,
-    FN2     = 0x110,
-    FN3     = 0x111,
-    FN4     = 0x011,
-    FN5     = 0x010
+    INPUT   = 0x0, 
+    OUTPUT  = 0x1,
+    FN0     = 0x4,
+    FN1     = 0x5,
+    FN2     = 0x6,
+    FN3     = 0x7,
+    FN4     = 0x3,
+    FN5     = 0x2
 };
 
 void set_gpio_function(u32 pin, enum GPIO_Funcs fn); 
@@ -37,9 +37,9 @@ void set_gpio_state(u32 pin, bool state);
 
 enum PullUpDown 
 { 
-    OFF     = 0x00, 
-    DOWN    = 0x01,
-    UP      = 0x10
+    OFF     = 0x0, 
+    DOWN    = 0x1,
+    UP      = 0x2
 };
 
 void set_gpio_pull_up_down(u32 pin, enum PullUpDown fn);
