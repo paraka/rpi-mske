@@ -31,6 +31,11 @@ _start:
 2:
 	cmp r4, r9
 	blo 1b
+
+    // store atags in global variable
+    .extern atags
+    ldr r3, =atags
+    str r2, [r3]
  
 	// Call kernel_main
 	ldr r3, =kernel_main

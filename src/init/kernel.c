@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <types.h>
 #include <init/meta.h>
+#include <init/atags.h>
 #include <common/peripherals.h>
 #include <common/delay.h>
 #include <common/panic.h>
@@ -59,6 +60,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
         kernel_panic();
     }
 
+    resume_atags();
     welcome_message();
 
     u8 buffer;
