@@ -55,11 +55,8 @@ static const char *find(const char *str, const char *token)
         const char *q = token;
         
         /* token match */
-        while(*p && *p == *q)
-        {
-            ++p;
-            ++q;
-        }
+        while(*p++ && *p++ == *q++)
+            ;
 
         /* token found */
         if (*q == 0) return str;
