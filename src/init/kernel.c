@@ -37,7 +37,7 @@ static void welcome_message()
     get_build_info(&info);
 
     printk("**** Welcome to rpi-mske kernel ****\n");
-    printk("Written by: %s\n", info.AUTHOR);
+    printk("Written by: %s <%s>\n", info.AUTHOR, info.EMAIL);
     printk("Version: %s \n", info.VERSION);
     printk("************************************\n\n");
 }
@@ -60,8 +60,8 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
         kernel_panic();
     }
 
-    resume_atags();
     welcome_message();
+    resume_atags();
 
     u8 buffer;
     while (true)
