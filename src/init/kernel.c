@@ -23,9 +23,9 @@ static void blink(u8 ntimes, u32 tdelay)
 
     for (i=0; i<ntimes; i++)
     {
-        set_led_state(true);
-        delay(tdelay);
         set_led_state(false);
+        delay(tdelay);
+        set_led_state(true);
         delay(tdelay);
     }
 }
@@ -52,7 +52,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     int uart_dev_id;
 
     init_led();
-    blink(3, 0x10000);
+    blink(3, 0x100000);
 
     device_init();
     
