@@ -37,7 +37,8 @@ static void welcome_message()
     get_build_info(&info);
 
     printk("**** Welcome to rpi-mske kernel ****\n");
-    printk("Written by: %s <%s>\n", info.AUTHOR, info.EMAIL);
+    printk("Written by: %s\n", info.AUTHOR);
+    printk("Email: <%s>\n", info.EMAIL);
     printk("Version: %s \n", info.VERSION);
     printk("************************************\n\n");
 }
