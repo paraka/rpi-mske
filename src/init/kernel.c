@@ -12,22 +12,29 @@
 #include <gpio/gpio.h>
 #include <led/led.h>
 #include <uart/uart.h>
+#include <timer/timer.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
-static void blink(u8 ntimes, u32 tdelay)
+static void blink(u8 ntimes, u32 us_delay)
 {
     volatile int i = 0;
 
     for (i=0; i<ntimes; i++)
     {
-        set_led_state(false);
-        delay(tdelay);
+        /* turn off */
         set_led_state(true);
-        delay(tdelay);
+        usleep(us_delay);
+
+        /* turn on */
+        set_led_state(false);
+        usleep(us_delay);
     }
+
+    /* blink finally always turn off led */
+    set_led_state(true);
 }
 
 static void welcome_message()
@@ -52,7 +59,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     int uart_dev_id;
 
     init_led();
-    blink(3, 0x100000);
+    blink(3, 1000000);
 
     device_init();
     

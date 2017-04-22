@@ -21,6 +21,7 @@ set(COMMON_SRC "common/device.c"
 set(GPIO_SRC "gpio/gpio.c")
 set(LED_SRC "led/led.c")
 set(UART_SRC "uart/uart.c")
+set(TIMER_SRC "timer/timer.c")
 set(ATAGS_FILE   "init/atags.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
 
@@ -31,6 +32,7 @@ set(KERNEL_SOURCES
     ${LED_SRC}
     ${KLIBC_SRC}
     ${UART_SRC}
+    ${TIMER_SRC}
     ${ATAGS_FILE}
     ${KERNEL_MAIN_FILE})
 

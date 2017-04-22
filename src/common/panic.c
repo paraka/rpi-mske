@@ -1,5 +1,5 @@
 #include <led/led.h>
-#include <common/delay.h>
+#include <timer/timer.h>
 #include <common/panic.h>
 
 void kernel_panic()
@@ -8,9 +8,12 @@ void kernel_panic()
 
     while (true)
     {
+        /* turn off */
         set_led_state(true);
-        delay(0x10000);
+        usleep(250000);
+
+        /* turn on */
         set_led_state(false);
-        delay(0x10000);
+        usleep(250000);
     }
 }
