@@ -47,6 +47,7 @@ static void welcome_message()
     printk("Written by: %s\n", info.AUTHOR);
     printk("Email: <%s>\n", info.EMAIL);
     printk("Version: %s \n", info.VERSION);
+    printk("Build time: %s\n", info.BUILD_DATE);
     printk("************************************\n\n");
 }
 
