@@ -3,8 +3,6 @@
 
 #include <types.h>
 
-static const char *build_time = __DATE__ " " __TIME__;
-
 struct meta 
 {
     const char *AUTHOR;
@@ -16,6 +14,12 @@ struct meta
     const char *VERSION;
 };
 
+static inline const char *get_build_time()
+{
+    static const char build_time[] = __DATE__ " " __TIME__;
+    return build_time;
+}
+
 static inline void get_build_info(struct meta *metadata) 
 {
     metadata->AUTHOR = "Sergio Paracuellos";
@@ -23,7 +27,7 @@ static inline void get_build_info(struct meta *metadata)
     metadata->KERNEL_NAME = "MSKE";
     metadata->KERNEL_NAME_CODE = "MSKE";
     metadata->KERNEL_REPO = "https://github.com/paraka/rpi-mske";
-    metadata->BUILD_DATE = build_time;
+    metadata->BUILD_DATE = get_build_time();
     metadata->VERSION = "0.0.0.0.1";
 }
 
