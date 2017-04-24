@@ -5,6 +5,7 @@
 #include <types.h>
 #include <init/meta.h>
 #include <init/atags.h>
+#include <common/defs.h>
 #include <common/peripherals.h>
 #include <common/delay.h>
 #include <common/panic.h>
@@ -53,9 +54,9 @@ static void welcome_message()
 
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
-    (void) r0;
-    (void) r1;
-    (void) atags;
+    UNUSED(r0);
+    UNUSED(r1);
+    UNUSED(atags);
 
     int uart_dev_id;
 
