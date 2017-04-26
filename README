@@ -19,10 +19,26 @@ Binary kernel.img file should be created.
 
 = HOW TO DEPLOY IN THE TARGET =
 
+There are two method to be able to deploy kernel in the target.
+
+== Manually ==
+
 Generated kernel.img is the image you have to use as your kernel image.
 
 Create a sdcard with a fat partition and add files included in boot directory.
 Add kernel.img in the partition too.
+
+== Create_sdcard script ==
+
+There is a script in tools directory to generate a bootable sdcard. Invoke without params show help.
+
+$ sudo ./create_sdcard.sh 
+
+Usage: ./create_sdcard.sh -k <kernel_img_file> -d <sdcard_device>
+
+So, if our device is /dev/sdb the following command generate the bootable sdcard.
+
+$ ./create_sdcard.sh -k ../build/kernel.img -d /dev/sdb
 
 Boot your pi connected with ftdi cable to gpio and use minicom or other terminal program to view boot process.
 
