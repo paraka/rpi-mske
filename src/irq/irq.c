@@ -87,10 +87,22 @@ mske_ret_code_t disable_irqs(void)
 
 void enable_irq(enum mske_irq_vector_id vector)
 {
-    UNUSED(vector);
+    enum IRQ_Register reg = 
+            (vector < 32) ? IRQ_ENABLE1
+                          : ((vector < 64) ? IRQ_ENABLE2 : IRQ_ENABLE_BASIC);
+    
+    volatile u32 *enable = (volatile u32 *) reg;
+    u32 mask = (1 << (vector % 32)); 
+    mmio_write(*enable, mask);
 }
 
 void disable_irq(enum mske_irq_vector_id vector)
 {
-    UNUSED(vector);
+    enum IRQ_Register reg = 
+            (vector < 32) ? IRQ_DISABLE1
+                          : ((vector < 64) ? IRQ_DISABLE2 : IRQ_DISABLE_BASIC);
+    
+    volatile u32 *disable = (volatile u32 *) reg;
+    u32 mask = (1 << (vector % 32)); 
+    mmio_write(*disable, mask);
 }
