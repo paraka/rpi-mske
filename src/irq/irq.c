@@ -106,3 +106,48 @@ void disable_irq(enum mske_irq_vector_id vector)
     u32 mask = (1 << (vector % 32)); 
     mmio_write(*disable, mask);
 }
+
+
+/**
+ *  This is the global IRQ handler
+ * It is based on the assembler code found in the Broadcom datasheet.
+ **/
+void irq_handler(void)
+{
+    register u32 ul_masked_status;
+    register u32 nirq;
+
+    ul_masked_status = mmio_read(IRQ_BASIC_PENDING);
+
+    /* Bits 7 through 0 in IRQ_BASIC_PENDING represent interrupts 64-71 */
+    if (ul_masked_status & 0xFF)
+    {
+        nirq = 64 + 31;
+    }
+    /* Bit 8 in IRQ_BASIC_PENDING indicates interrupts in IRQ_PENDING1 (interrupts 31-0) */
+    else if (ul_masked_status & 0x100)
+    {
+        ul_masked_status = mmio_read(IRQ_PENDING1);
+        nirq = 0 + 31;
+    }
+    /* Bit 9 in IRQ_BASIC_PENDING indicates interrupts in IRQ_PENDING2 (interrupts 63-32) */
+    else if (ul_masked_status & 0x200)
+    {
+        ul_masked_status = mmio_read(IRQ_PENDING2);
+        nirq = 32 + 31;
+    }
+    else
+    {
+        /* No interrupt avaiable */
+        return;
+    }
+
+    /* Keep only least significant bit, in case multiple interrupts have occured */
+    ul_masked_status &= -ul_masked_status;
+
+    /* Some magic to determine number of interrupt to serve */
+    nirq = nirq - clz(ul_masked_status);
+
+    /* Call interrupt handler */
+    mske_irq_vector_table[nirq].irq_fn_handler(nirq, mske_irq_vector_table[nirq].param);
+}
