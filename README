@@ -19,24 +19,24 @@ Binary kernel.img file should be created.
 
 = HOW TO DEPLOY IN THE TARGET =
 
-There are two method to be able to deploy kernel in the target.
+There are two methods to be able to deploy built kernel in the target.
 
 == Manually ==
 
 Generated kernel.img is the image you have to use as your kernel image.
 
-Create a sdcard with a fat partition and add files included in boot directory.
-Add kernel.img in the partition too.
+Create a sdcard with a fat partition and add the files included in sd_boot directory.
+Add kernel.img to the partition too.
 
 == Create_sdcard script ==
 
-There is a script in tools directory to generate a bootable sdcard. Invoke without params show help.
+There is a script in tools directory that allows you to generate a bootable sdcard. Invoke it without params shows script's help.
 
 $ sudo ./create_sdcard.sh 
 
 Usage: ./create_sdcard.sh -k <kernel_img_file> -d <sdcard_device>
 
-So, if our device is /dev/sdb the following command generate the bootable sdcard.
+So, if your device is /dev/sdb the following command will generate the bootable sdcard.
 
 $ ./create_sdcard.sh -k ../build/kernel.img -d /dev/sdb
 
