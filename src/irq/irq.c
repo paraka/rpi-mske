@@ -112,7 +112,7 @@ void disable_irq(enum mske_irq_vector_id vector)
  *  This is the global IRQ handler
  * It is based on the assembler code found in the Broadcom datasheet.
  **/
-void irq_handler(void)
+void handler_irq(void)
 {
     register u32 ul_masked_status;
     register u32 nirq;
@@ -150,4 +150,8 @@ void irq_handler(void)
 
     /* Call interrupt handler */
     mske_irq_vector_table[nirq].irq_fn_handler(nirq, mske_irq_vector_table[nirq].param);
+}
+
+void handler_fiq(void)
+{
 }

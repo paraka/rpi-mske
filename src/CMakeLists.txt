@@ -32,24 +32,28 @@ set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
 file(GLOB KLIBC_SRC  "klibc/src/*.c")
 set(BOOT_SRC "init/boot.s")
+set(ENTRY_SRC "init/entry.S")
 set(COMMON_SRC "common/device.c" 
                "common/panic.c")
 set(GPIO_SRC "gpio/gpio.c")
 set(LED_SRC "led/led.c")
 set(UART_SRC "uart/uart.c")
 set(IRQ_SRC "irq/irq.c")
+set(EXCEPTIONS_SRC "exceptions/exceptions.c")
 set(TIMER_SRC "timer/timer.c")
 set(ATAGS_FILE   "init/atags.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
+    ${ENTRY_SRC}
     ${COMMON_SRC}
     ${GPIO_SRC}
     ${LED_SRC}
     ${KLIBC_SRC}
     ${UART_SRC}
     ${IRQ_SRC}
+    ${EXCEPTIONS_SRC}
     ${TIMER_SRC}
     ${ATAGS_FILE}
     ${KERNEL_MAIN_FILE})
