@@ -3,48 +3,49 @@
 
 enum PROCESSOR_MODE
 {
-    USR = 0xb10000,
-    FIQ = 0xb10001,
-    IRQ = 0xb10010,
-    SVC = 0xb10011,
-    MON = 0xb10110,
-    ABT = 0xb10111,
-    HYP = 0xb11010,
-    UND = 0xb11011,
-    SYS = 0xb11111  
+    USR = 0b10000,
+    FIQ = 0b10001,
+    IRQ = 0b10010,
+    SVC = 0b10011,
+    MON = 0b10110,
+    ABT = 0b10111,
+    HYP = 0b11010,
+    UND = 0b11011,
+    SYS = 0b11111  
 };
 
-static const char *processor_mode_to_string(u32 mode)
+static const char *processor_mode_to_string(enum PROCESSOR_MODE mode)
 {
     const char *ret;
 
     switch(mode)
     {
-        case 0xb10000:
+        case 0b10000:
             ret = "USR";
             break;
-        case 0xb10001:
+        case 0b10001:
             ret = "FIQ";
             break;
-        case 0xb10010:
+        case 0b10010:
             ret = "IRQ";
             break;
-        case 0xb10011:
+        case 0b10011:
             ret = "SVC";
             break;
-        case 0xb10110:
+        case 0b10110:
             ret = "MON";
             break;
-        case 0xb10111:
+        case 0b10111:
             ret = "HYP";
             break;
-        case 0xb11010:
+        case 0b11010:
             ret = "UND";
             break;
-        case 0xb11111:
+        case 0b11111:
             ret = "SYS";
             break;
         default:
+            /* should never be here */
             ret = "ERROR";
             break;
     }
@@ -52,7 +53,10 @@ static const char *processor_mode_to_string(u32 mode)
     return ret;
 }
 
-#define BIT(w, i, c) (((w) & (1 << (i))) ? c : '-')
+static inline u8 BIT(mske_register_t w, u8 i, u8 c)
+{
+    return ((w & (1 << i)) ? c : '-');
+}
 
 void dump_registers(const mske_context_t *ctx)
 {
@@ -72,7 +76,7 @@ void dump_registers(const mske_context_t *ctx)
             BIT(ctx->spsr, 27, 'Q'),
             (ctx->spsr >> 25) & 0x3,
             BIT(ctx->spsr, 24, 'J'),
-            // 23-20 reserved
+            /* 23-20 reserved */
             (ctx->spsr >> 16) & 0xF,
             (ctx->spsr >> 10) & 0x3F,
             BIT(ctx->spsr,  9, 'E'),
@@ -80,6 +84,7 @@ void dump_registers(const mske_context_t *ctx)
             BIT(ctx->spsr,  7, 'I'),
             BIT(ctx->spsr,  6, 'F'),
             BIT(ctx->spsr,  5, 'T'),
+            /* processor mode are in th last five bits */
             processor_mode_to_string(ctx->spsr & 0x1F),
             ctx->spsr & 0x1F);
 }
