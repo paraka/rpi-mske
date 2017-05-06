@@ -40,6 +40,7 @@ set(LED_SRC "led/led.c")
 set(UART_SRC "uart/uart.c")
 set(IRQ_SRC "irq/irq.c")
 set(EXCEPTIONS_SRC "exceptions/exceptions.c")
+set(ARCH_ARM_SRC "arch/arm/processor.c")
 set(TIMER_SRC "timer/timer.c")
 set(ATAGS_FILE   "init/atags.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
@@ -54,6 +55,7 @@ set(KERNEL_SOURCES
     ${UART_SRC}
     ${IRQ_SRC}
     ${EXCEPTIONS_SRC}
+    ${ARCH_ARM_SRC}
     ${TIMER_SRC}
     ${ATAGS_FILE}
     ${KERNEL_MAIN_FILE})
