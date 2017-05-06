@@ -50,6 +50,5 @@ void enable_irq(enum mske_irq_vector_id vector);
 void disable_irq(enum mske_irq_vector_id vector);
 mske_ret_code_t enable_irqs(void);
 mske_ret_code_t disable_irqs(void);
-void handler_irq(void);
 
 #endif /* _IRQ_H_ */

@@ -1,4 +1,6 @@
 #include <common/defs.h>
+#include <common/io.h>
+#include <arch/arm/processor.h>
 #include <irq/irq.h>
 
 static mske_interrupt_vector_t mske_irq_vector_table[INTC_IRQ_TOTAL];
@@ -46,6 +48,7 @@ static void default_irq_handler(enum mske_irq_vector_id nirq, void *param)
 {
     UNUSED(nirq);
     UNUSED(param);
+    printk("default_irq_handler: IRQ NUM: (%d)\n", nirq);
 }
 
 mske_ret_code_t interrupt_controller_init()
@@ -112,10 +115,13 @@ void disable_irq(enum mske_irq_vector_id vector)
  *  This is the global IRQ handler
  * It is based on the assembler code found in the Broadcom datasheet.
  **/
-void handler_irq(void)
+void handler_irq(mske_context_t *ctx, u32 num)
 {
     register u32 ul_masked_status;
     register u32 nirq;
+
+    UNUSED(ctx);
+    UNUSED(num);
 
     ul_masked_status = mmio_read(IRQ_BASIC_PENDING);
 
@@ -152,6 +158,9 @@ void handler_irq(void)
     mske_irq_vector_table[nirq].irq_fn_handler(nirq, mske_irq_vector_table[nirq].param);
 }
 
-void handler_fiq(void)
+void handler_fiq(mske_context_t *ctx, u32 num)
 {
+    UNUSED(num);
+    printk("%s: Regs @ %p\n", "FIQ", ctx);
+    dump_registers(ctx);
 }

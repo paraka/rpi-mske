@@ -11,6 +11,7 @@
 #include <common/panic.h>
 #include <common/io.h>
 #include <gpio/gpio.h>
+#include <irq/irq.h>
 #include <led/led.h>
 #include <uart/uart.h>
 #include <timer/timer.h>
@@ -62,6 +63,8 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     init_led();
     blink(3, 1000000);
+
+    interrupt_controller_init();
 
     device_init();
     
