@@ -42,6 +42,7 @@ set(IRQ_SRC "irq/irq.c")
 set(EXCEPTIONS_SRC "exceptions/exceptions.c")
 set(ARCH_ARM_SRC "arch/arm/processor.c")
 set(TIMER_SRC "timer/timer.c")
+set(ARM_TIMER_SRC "timer/arm_timer.c")
 set(ATAGS_FILE   "init/atags.c")
 set(KERNEL_MAIN_FILE "init/kernel.c")
 
@@ -57,6 +58,7 @@ set(KERNEL_SOURCES
     ${EXCEPTIONS_SRC}
     ${ARCH_ARM_SRC}
     ${TIMER_SRC}
+    ${ARM_TIMER_SRC}
     ${ATAGS_FILE}
     ${KERNEL_MAIN_FILE})
 
