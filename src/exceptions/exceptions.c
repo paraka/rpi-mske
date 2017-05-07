@@ -1,6 +1,9 @@
 #include <common/io.h>
 #include <common/peripherals.h>
 #include <arch/arm/processor.h>
+#include <exceptions/exceptions.h>
+
+extern u32 exception_vector[];
 
 static const char *exception[] = {
     "Reset",
@@ -12,6 +15,17 @@ static const char *exception[] = {
     "IRQ",
     "FIQ"
 };
+
+static void set_vbar(u32 *base_address)
+{
+    asm volatile ("mcr p15, 0, %[base_address], c12, c0, 0"
+                    :: [base_address] "r" (base_address));
+}
+
+void init_exceptions(void)
+{
+    set_vbar(exception_vector);
+}
 
 void handler_reset(mske_context_t *ctx, u32 num)
 {

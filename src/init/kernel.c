@@ -15,6 +15,8 @@
 #include <led/led.h>
 #include <uart/uart.h>
 #include <timer/timer.h>
+#include <timer/arm_timer.h>
+#include <exceptions/exceptions.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -59,6 +61,8 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     UNUSED(r1);
     UNUSED(atags);
 
+    init_exceptions();
+
     int uart_dev_id;
 
     init_led();
@@ -76,10 +80,14 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     welcome_message();
     resume_atags();
 
-    u8 buffer;
+    enable_irq(IRQ_ARM_TIMER);
+
+    /* test timer interrupt */
+    setup_arm_timer();
+
+    enable_irqs();
+
     while (true)
     {
-        device_read(uart_dev_id, &buffer, 1);
-        device_write(uart_dev_id, &buffer, 1);
     }
 }
