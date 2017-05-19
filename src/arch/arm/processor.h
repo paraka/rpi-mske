@@ -20,10 +20,10 @@ typedef struct
     mske_register_t r10;
     mske_register_t r11;
     mske_register_t r12;
-    mske_register_t lr;
-    mske_register_t lr_usr;
     mske_register_t lr_svc;
     mske_register_t sp_usr;
+    mske_register_t lr_usr;
+    mske_register_t lr;
     mske_register_t spsr;
 } mske_context_t;
 
