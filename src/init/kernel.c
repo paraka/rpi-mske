@@ -22,7 +22,7 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
-static void(*generate_exception)(void) = (void(*)(void))0x02100000;
+//static void(*generate_exception)(void) = (void(*)(void))0x02100000;
 
 static void blink(u8 ntimes, u32 us_delay)
 {
@@ -57,6 +57,16 @@ static void welcome_message()
     printk("************************************\n\n");
 }
 
+static void register_all_devices()
+{
+    mske_ret_code_t ret;
+
+    if ((ret = uart_register()) != MSKE_SUCESS)
+    {
+        kernel_panic();
+    }
+}
+
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
     UNUSED(r0);
@@ -65,8 +75,6 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     init_exceptions();
 
-    int uart_dev_id;
-
     init_led();
     blink(3, 1000000);
 
@@ -74,10 +82,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     device_init();
     
-    if ((uart_dev_id = uart_register()) < 0)
-    {
-        kernel_panic();
-    }
+    register_all_devices();
 
     welcome_message();
     resume_atags();

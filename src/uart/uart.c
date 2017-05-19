@@ -49,12 +49,12 @@ struct dev_operations device_operations = {
     uart_destroy,
 };
 
-int uart_register(void)
+mske_ret_code_t uart_register(void)
 {
     if ((uart_dev_id = device_register(&device_operations)) < 0)
         return MSKE_ERR;
     
-    return uart_dev_id;    
+    return MSKE_SUCESS;    
 }
 
 mske_ret_code_t uart_init(void)
