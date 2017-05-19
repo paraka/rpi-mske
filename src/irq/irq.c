@@ -123,6 +123,8 @@ void handler_irq(mske_context_t *ctx, u32 num)
     UNUSED(ctx);
     UNUSED(num);
 
+    printk("%s: Regs @ %p Num: %d\n", "IRQ", ctx,  num);
+
     ul_masked_status = mmio_read(IRQ_BASIC_PENDING);
 
     /* Bits 7 through 0 in IRQ_BASIC_PENDING represent interrupts 64-71 */
