@@ -4,6 +4,8 @@
 #include <common/device.h>
 #include <types.h>
 
+extern int uart_dev_id;
+
 int uart_register(void);
 
 mske_ret_code_t uart_init(void);
