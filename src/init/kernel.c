@@ -22,6 +22,8 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
+static void(*generate_exception)(void) = (void(*)(void))0x02100000;
+
 static void blink(u8 ntimes, u32 us_delay)
 {
     volatile int i = 0;
@@ -87,7 +89,7 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     enable_irqs();
 
-    while (true)
-    {
-    }
+    //generate_exception();
+
+    while(true);
 }
