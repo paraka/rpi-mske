@@ -50,4 +50,10 @@ static inline void dmb(void)
     asm volatile ("mcr p15, 0, r12, c7, c10, 5");
 }
 
+static inline void barrier(void)
+{
+    dsb();
+    isb();
+}
+
 #endif /* _BARRIER_H_ */
