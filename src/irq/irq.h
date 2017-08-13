@@ -36,7 +36,7 @@ enum mske_irq_vector_id
     IRQ_ILLEGAL_ACCESS0 = (IRQ_BASIC_BASE_ID + 7)   /* 71 */
 };
 
-typedef void (*mske_fn_interrupt_handler)(enum mske_irq_vector_id nirq, void *param);
+typedef void (*mske_fn_interrupt_handler)(void *param);
 
 typedef struct
 {

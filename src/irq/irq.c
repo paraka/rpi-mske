@@ -44,11 +44,10 @@ static inline void irq_disable()
 
 
 /* default irq_handler */
-static void default_irq_handler(enum mske_irq_vector_id nirq, void *param) 
+static void default_irq_handler(void *param) 
 {
-    UNUSED(nirq);
     UNUSED(param);
-    printk("default_irq_handler: IRQ NUM: (%d)\n", nirq);
+    printk("%s\n", __func__);
 }
 
 mske_ret_code_t interrupt_controller_init()
@@ -66,6 +65,8 @@ mske_ret_code_t interrupt_controller_init()
 
 mske_ret_code_t register_interrupt(enum mske_irq_vector_id nirq, mske_fn_interrupt_handler irq_handler, void *param)
 {
+    printk("%s: %d (0x%08X)\n", __func__, nirq, &irq_handler);
+
     irq_disable();
     mske_irq_vector_table[nirq].irq_fn_handler = irq_handler;
     mske_irq_vector_table[nirq].param = param;
@@ -94,9 +95,8 @@ void enable_irq(enum mske_irq_vector_id vector)
             (vector < 32) ? IRQ_ENABLE1
                           : ((vector < 64) ? IRQ_ENABLE2 : IRQ_ENABLE_BASIC);
     
-    volatile u32 *enable = (volatile u32 *) reg;
     u32 mask = (1 << (vector % 32)); 
-    mmio_write(*enable, mask);
+    mmio_write(reg, mask);
 }
 
 void disable_irq(enum mske_irq_vector_id vector)
@@ -105,11 +105,9 @@ void disable_irq(enum mske_irq_vector_id vector)
             (vector < 32) ? IRQ_DISABLE1
                           : ((vector < 64) ? IRQ_DISABLE2 : IRQ_DISABLE_BASIC);
     
-    volatile u32 *disable = (volatile u32 *) reg;
     u32 mask = (1 << (vector % 32)); 
-    mmio_write(*disable, mask);
+    mmio_write(reg, mask);
 }
-
 
 /**
  *  This is the global IRQ handler
@@ -157,7 +155,7 @@ void handler_irq(mske_context_t *ctx, u32 num)
     nirq = nirq - clz(ul_masked_status);
 
     /* Call interrupt handler */
-    mske_irq_vector_table[nirq].irq_fn_handler(nirq, mske_irq_vector_table[nirq].param);
+    mske_irq_vector_table[nirq].irq_fn_handler(mske_irq_vector_table[nirq].param);
 }
 
 void handler_fiq(mske_context_t *ctx, u32 num)
