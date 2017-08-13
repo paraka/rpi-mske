@@ -53,13 +53,11 @@ handler_reset:
 
     mov r0, #(CPSR_MODE_IRQ | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // IRQ mode
-    mov sp, #(63 * 1024 * 1024)
-    //ldr sp, =__irq_stack_top
+    ldr sp, =__irq_stack_top
 
     mov r0, #(CPSR_MODE_SVR | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // go back to SVC mode
-    mov sp, #(64 * 1024 * 1024)
-    //ldr sp, =__svc_stack_top
+    ldr sp, =__svc_stack_top
 
     // Clear out bss.
     ldr r4, =__bss_start
@@ -80,6 +78,8 @@ handler_reset:
     blo 1b
 
     // store atags in global variable
+    // TODO: Not working because of changes
+    // in the svc and irq stack. Check it!!
     .extern atags
     ldr r10, =atags
     str r2, [r10]

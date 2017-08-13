@@ -38,5 +38,12 @@ SECTIONS
     }
     . = ALIGN(4096); /* align to page size */
     __bss_end = .;
+
+    . = . + 0x10000;
+    __svc_stack_top = .; /* 64KB of SVC stack space */
+
+    . = . + 0x10000;
+    __irq_stack_top = .; /* 64KB of IRQ stack space */
+
     __end = .;
 }
