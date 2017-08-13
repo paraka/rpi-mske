@@ -1,7 +1,6 @@
-// To keep this in the first portion of the binary.
 .section ".text.boot"
 
-.global _start
+.global _start, vectors_start, vectors_end
 
 // See ARM section A2.2 (Processor Modes)
 .equ    CPSR_MODE_USER,         0x10
@@ -18,15 +17,16 @@
 .equ    CPSR_THUMB,             0x20
 
 _start:
-    ldr pc, reset_handler_addr
-    ldr pc, undef_handler_addr
-    ldr pc, swi_handler_addr
-    ldr pc, prefetch_abort_handler_addr
-    ldr pc, data_abort_handler_addr
-    ldr pc, unused_handler_addr
-    ldr pc, irq_handler_addr
-    ldr pc, fiq_handler_addr
 
+vectors_start:
+ldr pc, reset_handler_addr
+ldr pc, undef_handler_addr
+ldr pc, swi_handler_addr
+ldr pc, prefetch_abort_handler_addr
+ldr pc, data_abort_handler_addr
+ldr pc, unused_handler_addr
+ldr pc, irq_handler_addr
+ldr pc, fiq_handler_addr
 reset_handler_addr:             .word handler_reset
 undef_handler_addr:             .word stub_undef
 swi_handler_addr:               .word stub_svc
@@ -35,21 +35,19 @@ data_abort_handler_addr:        .word stub_data_abort
 unused_handler_addr:            .word handler_reset
 irq_handler_addr:               .word stub_irq
 fiq_handler_addr:               .word stub_fiq
+vectors_end:
 
 // Entry point for the kernel.
 // r15 -> should begin execution at 0x8000.
 // r0 -> 0x00000000
 // r1 -> 0x00000C42
 // r2 -> 0x00000100 - start of ATAGS
-// preserve these registers as argument for kernel_main
 
 handler_reset:
-    mov     r0, #0x8000
-    mov     r1, #0x0000
-    ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
+    ldr sp, =__svc_stack_top
+
+    // copy exception table to 0x0
+    bl copy_vector_table
 
     mov r0, #(CPSR_MODE_IRQ | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // IRQ mode
@@ -57,7 +55,6 @@ handler_reset:
 
     mov r0, #(CPSR_MODE_SVR | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // go back to SVC mode
-    ldr sp, =__svc_stack_top
 
     // Clear out bss.
     ldr r4, =__bss_start
@@ -78,11 +75,10 @@ handler_reset:
     blo 1b
 
     // store atags in global variable
-    // TODO: Not working because of changes
-    // in the svc and irq stack. Check it!!
     .extern atags
-    ldr r10, =atags
-    str r2, [r10]
+    ldr r2, =0x00000100 // start of atags in this address
+    ldr r3, =atags
+    str r2, [r3]
  
     // Call kernel_main
     ldr r3, =kernel_main
@@ -144,7 +140,6 @@ stub_\name:
 .endm
 
 // num, offset, name
-//make 0, 0, reset
 make 1, 4, undef
 make 2, 0, svc
 make 3, 4, prefetch_abort

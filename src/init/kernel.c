@@ -103,6 +103,16 @@ static void register_all_devices()
     }
 }
 
+void copy_vector_table(void)
+{
+    extern volatile u32 vectors_start, vectors_end;
+    volatile u32 *v_src = &vectors_start;
+    volatile u32 *v_dst = (u32 *)0;
+
+    while (v_src < &vectors_end)
+        *v_dst++ = *v_src++;
+}
+
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
     UNUSED(r0);
@@ -119,7 +129,8 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     register_all_devices();
 
     welcome_message();
-    //resume_atags();
+
+    resume_atags();
 
     enable_irq(IRQ_ARM_TIMER);
 
