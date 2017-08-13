@@ -16,7 +16,6 @@
 #include <uart/uart.h>
 #include <timer/timer.h>
 #include <timer/arm_timer.h>
-#include <exceptions/exceptions.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */

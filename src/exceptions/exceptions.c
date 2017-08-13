@@ -2,7 +2,6 @@
 #include <common/peripherals.h>
 #include <arch/arm/processor.h>
 #include <arch/arm/cpuopts.h>
-#include <exceptions/exceptions.h>
 
 static const char *exception[] = {
     "Reset",
