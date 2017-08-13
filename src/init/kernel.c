@@ -22,7 +22,27 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
-//static void(*generate_exception)(void) = (void(*)(void))0x02100000;
+static void arm_timer_irq_handler(void *param)
+{
+    UNUSED(param);
+
+    static int count = 0;
+
+    arm_timer_clear_irq();
+
+    if (count)
+    {
+        /* turn off */
+        set_led_state(true);
+        count = 0;
+    }
+    else
+    {
+        /* turn on */
+        set_led_state(false);
+        count = 1;
+    }
+}
 
 static void blink(u8 ntimes, u32 us_delay)
 {
@@ -73,8 +93,6 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     UNUSED(r1);
     UNUSED(atags);
 
-    init_exceptions();
-
     init_led();
     blink(3, 1000000);
 
@@ -85,16 +103,16 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
     register_all_devices();
 
     welcome_message();
-    resume_atags();
+    //resume_atags();
 
     enable_irq(IRQ_ARM_TIMER);
+
+    register_interrupt(IRQ_ARM_TIMER, arm_timer_irq_handler, NULL);
 
     /* test timer interrupt */
     setup_arm_timer();
 
     enable_irqs();
 
-    //generate_exception();
-
-    while(true);
+    while(1) { /* never exit */ }
 }
