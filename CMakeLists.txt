@@ -72,6 +72,6 @@ target_link_libraries(${BINARY_NAME} -lgcc)
 # Other customs
 #############################
 add_custom_command(TARGET ${BINARY_NAME} POST_BUILD
-                COMMAND ${CMAKE_OBJCOPY} ${CMAKE_BINARY_DIR}/src/${BINARY_NAME} -O binary kernel.img
+                COMMAND ${CMAKE_OBJCOPY} ${CMAKE_BINARY_DIR}/${BINARY_NAME} -O binary kernel.img
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMENT "Convert the ELF output file to a binary image")
