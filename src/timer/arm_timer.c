@@ -33,8 +33,9 @@ enum ARM_TIMER_REGS
 void setup_arm_timer()
 {
     mmio_write(LOAD, 0x400);
-    mmio_write(CONTROL, (ARMTIMER_CTRL_23BIT 
-            | ARMTIMER_CTRL_ENABLE | ARMTIMER_CTRL_INT_ENABLE | ARMTIMER_CTRL_PRESCALE_256));
+    volatile u32 mask = (ARMTIMER_CTRL_23BIT | ARMTIMER_CTRL_ENABLE |
+                         ARMTIMER_CTRL_INT_ENABLE | ARMTIMER_CTRL_PRESCALE_256);
+    mmio_write(CONTROL, mask);
 }
 
 void arm_timer_clear_irq()
