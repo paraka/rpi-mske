@@ -22,26 +22,42 @@
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
+#define MAX_EXEC_TIMES  10
+
 static void arm_timer_irq_handler(void *param)
 {
     UNUSED(param);
 
     static int count = 0;
+    static bool turned = false;
 
+    /*
+     * Even we clear the interrupt bit in the timer
+     * it will be exec again the interrupt until pending
+     * bit for the interrupt will be clear in source
+     */
     arm_timer_clear_irq();
 
-    if (count)
+    if (turned)
     {
         /* turn off */
         set_led_state(true);
-        count = 0;
+        turned = false;
     }
     else
     {
         /* turn on */
         set_led_state(false);
-        count = 1;
+        turned = true;
     }
+
+
+    /*
+     * increment count when it reaches 10 clear
+     * the interrup pending bit for IRQ_ARM_TIMER
+     */
+    if (++count == MAX_EXEC_TIMES)
+        disable_irq(IRQ_ARM_TIMER);
 }
 
 static void blink(u8 ntimes, u32 us_delay)
