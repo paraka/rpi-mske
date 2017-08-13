@@ -112,6 +112,16 @@ void copy_vector_table(void)
         *v_dst++ = *v_src++;
 }
 
+void clear_bss(void)
+{
+    extern volatile u32 __bss_start, __bss_end;
+    volatile u32 *bss = &__bss_start;
+    volatile u32 *bss_end = &__bss_end;
+
+    while (bss < bss_end)
+        *bss++ = 0;
+}
+
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
     UNUSED(r0);
