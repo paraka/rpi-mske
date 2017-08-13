@@ -1,4 +1,4 @@
-#include "device.h"
+#include <common/device.h>
 
 static int num_devices = 0;
 

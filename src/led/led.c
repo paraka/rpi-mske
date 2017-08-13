@@ -1,5 +1,5 @@
 #include <gpio/gpio.h>
-#include "led.h"
+#include <led/led.h>
 
 #define GPIO_STATUS_LED_PIN  16
 

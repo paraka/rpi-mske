@@ -1,5 +1,5 @@
 #include <common/delay.h>
-#include "gpio.h"
+#include <gpio/gpio.h>
 
 /* page 90 of BCM2835-ARM-Peripherals.pdf */
 /* These are relative offset to GPIO_BASE address */
