@@ -32,7 +32,6 @@ set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
 file(GLOB KLIBC_SRC  "klibc/src/*.c")
 set(BOOT_SRC "init/boot.s")
-set(ENTRY_SRC "init/entry.S")
 set(COMMON_SRC "common/device.c" 
                "common/panic.c")
 set(GPIO_SRC "gpio/gpio.c")
@@ -48,7 +47,6 @@ set(KERNEL_MAIN_FILE "init/kernel.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
-    ${ENTRY_SRC}
     ${COMMON_SRC}
     ${GPIO_SRC}
     ${LED_SRC}
