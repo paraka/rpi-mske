@@ -4,8 +4,6 @@
 #include <arch/arm/cpuopts.h>
 #include <exceptions/exceptions.h>
 
-extern u32 exception_vector[];
-
 static const char *exception[] = {
     "Reset",
     "Undefined instruction",
@@ -16,17 +14,6 @@ static const char *exception[] = {
     "IRQ",
     "FIQ"
 };
-
-void init_exceptions(void)
-{
-    write_vbar(exception_vector);
-}
-
-void handler_reset(mske_context_t *ctx, u32 num)
-{
-    printk("%s: Regs @ %p\n", exception[num], ctx);
-    dump_registers(ctx);
-}
 
 void handler_undef(mske_context_t *ctx, u32 num)
 {
