@@ -49,10 +49,22 @@ handler_reset:
     // copy exception table to 0x0
     bl copy_vector_table
 
+    // set ABT mode stack
+    mov r0, #(CPSR_MODE_ABORT | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
+    msr cpsr_c, r0  // ABT mode
+    ldr sp, =__abt_stack_top
+
+    // set UNDEF mode stack
+    mov r0, #(CPSR_MODE_UNDEFINED | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
+    msr cpsr_c, r0  // UND mode
+    ldr sp, =__und_stack_top
+
+    // set IRQ mode stack
     mov r0, #(CPSR_MODE_IRQ | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // IRQ mode
     ldr sp, =__irq_stack_top
 
+    // back to SVC mode
     mov r0, #(CPSR_MODE_SVR | CPSR_IRQ_INHIBIT | CPSR_FIQ_INHIBIT)
     msr cpsr_c, r0         // go back to SVC mode
 
@@ -70,6 +82,7 @@ handler_reset:
     blx r3
 
 _halt:
+    wfe // wait for events
     b _halt
 
 // save all registers and SPSR on the SVC stack, (LR corrected by offset)

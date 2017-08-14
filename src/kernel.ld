@@ -39,11 +39,17 @@ SECTIONS
     . = ALIGN(4096); /* align to page size */
     __bss_end = .;
 
-    . = . + 0x10000;
-    __svc_stack_top = .; /* 64KB of SVC stack space */
+    . = . + 0x1000;
+    __svc_stack_top = .; /* 4KB of SVC stack space */
 
-    . = . + 0x10000;
-    __irq_stack_top = .; /* 64KB of IRQ stack space */
+    . = . + 0x1000;
+    __irq_stack_top = .; /* 4KB of IRQ stack space */
+
+    . = . + 0x1000;
+    __abt_stack_top = .; /* 4KB of ABORT stack space */
+
+    . = . + 0x1000;
+    __und_stack_top = .; /* 4KB of UNDEFINED stack space */
 
     __end = .;
 }
