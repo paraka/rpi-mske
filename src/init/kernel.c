@@ -16,6 +16,7 @@
 #include <uart/uart.h>
 #include <timer/timer.h>
 #include <timer/arm_timer.h>
+#include <os/task.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
@@ -150,5 +151,11 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     enable_irqs();
 
-    while(1) { /* never exit */ }
+    init_dummy_processes();
+
+    while(1)
+    {
+        usleep(3000000);
+        context_switch();
+    }
 }

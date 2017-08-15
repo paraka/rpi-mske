@@ -1,6 +1,8 @@
 .section ".text.boot"
 
 .global _start, vectors_start, vectors_end
+.global proc, TASK_SIZE, scheduler, running
+.global tswitch
 
 // See ARM section A2.2 (Processor Modes)
 .equ    CPSR_MODE_USER,         0x10
@@ -44,7 +46,12 @@ vectors_end:
 // r2 -> 0x00000100 - start of ATAGS
 
 handler_reset:
-    ldr sp, =__svc_stack_top
+    // set SVC stack to first process high end
+    ldr r0, =proc
+    ldr r1, =TASK_SIZE
+    ldr r2, [r1, #0]
+    add r0, r0, r2
+    mov sp, r0
 
     // copy exception table to 0x0
     bl copy_vector_table
@@ -84,6 +91,17 @@ handler_reset:
 _halt:
     wfe // wait for events
     b _halt
+
+tswitch:
+    stmfd sp!, {r0-r12, lr}
+    ldr r0, =running
+    ldr r1, [r0, #0]
+    str sp, [r1, #4] //running->ksp = sp
+    bl scheduler
+    ldr r0, =running
+    ldr r1, [r0, #0]
+    ldr sp, [r1, #4]
+    ldmfd sp!, {r0-r12, pc}
 
 // save all registers and SPSR on the SVC stack, (LR corrected by offset)
 .macro saveall, num, offset
