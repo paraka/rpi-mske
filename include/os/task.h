@@ -29,8 +29,13 @@ typedef struct task_struct
 extern const u32 TASK_SIZE; /* size of the struct to be able to set SVC stack correctly */
 extern mske_task_t *running; /* current running task */
 extern mske_task_t proc[NUMBER_OF_PROCESS]; /* this are the processes in the system */
+extern mske_task_t *task_ready_queue;
+extern mske_task_t *task_free_list;
 
-void init_dummy_processes(void);
+void kernel_process_init(void);
+u32 dummy_task_entry_point(void *arg);
+int kfork(u32 func, int priority);
+void kexit(void);
 void context_switch(void);
 void scheduler(void);
 
