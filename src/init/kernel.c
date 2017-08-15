@@ -151,11 +151,12 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     enable_irqs();
 
-    init_dummy_processes();
+    kernel_process_init();
+    kfork((u32)dummy_task_entry_point, 1); /* P0 create P1 in ready queue */
 
     while(1)
     {
-        usleep(3000000);
+        while(task_ready_queue == 0); /* P0 loops if task_ready_queue is empty */
         context_switch();
     }
 }
