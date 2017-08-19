@@ -46,8 +46,9 @@ set(ARM_TIMER_SRC "src/timer/arm_timer.c")
 set(ATAGS_FILE   "src/init/atags.c")
 set(KERNEL_MAIN_FILE "src/init/kernel.c")
 
-set(OS_TASK_SRC "src/os/task.c"
-                "src/os/queue.c")
+set(OS_SRCS "src/os/task.c"
+            "src/os/queue.c"
+            "src/os/semaphore.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
@@ -62,7 +63,7 @@ set(KERNEL_SOURCES
     ${TIMER_SRC}
     ${ARM_TIMER_SRC}
     ${ATAGS_FILE}
-    ${OS_TASK_SRC}
+    ${OS_SRCS}
     ${KERNEL_MAIN_FILE})
 
 add_executable(${BINARY_NAME} ${KERNEL_SOURCES})
