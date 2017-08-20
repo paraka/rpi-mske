@@ -1,4 +1,5 @@
 #include <irq/irq.h>
+#include <arch/arm/processor.h>
 #include <os/queue.h>
 #include <os/semaphore.h>
 
@@ -22,11 +23,13 @@ mske_return_code_t mske_semaphore_wait(mske_semaphore_t *s)
 {
     mske_return_code_t ret = MSKE_OS_OK;
 
+    mske_register_t cpsr = asm_get_cpsr();
     disable_irqs();
     s->value--;
     if (s->value < 0)
         ret = block(s);
     enable_irqs();
+    asm_set_cpsr(cpsr);
 
     return ret;
 }
@@ -35,11 +38,13 @@ mske_return_code_t mske_semaphore_release(mske_semaphore_t *s)
 {
     mske_return_code_t ret = MSKE_OS_OK;
 
+    mske_register_t cpsr = asm_get_cpsr();
     disable_irqs();
     s->value++;
     if (s->value >= 0)
         signal(s);
     enable_irqs();
+    asm_set_cpsr(cpsr);
 
     return ret;
 }
