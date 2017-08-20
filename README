@@ -6,6 +6,20 @@ A simple kernel from scratch is something that I've always wanted to do.
 This not pretend to be something big but big enough to undertand how a lot of stuff really works.
 Because I have a Raspberry Pi model B this is the target platform.
 
+= WHAT IS AN WHAT IS NOT INCLUDED =
+
+There are different stuff currently supported in the kernel. These are:
+
+* Driver for uart
+* General GPIO driver code.
+* Boot led driver over gpio.
+* Interrupt support. It allows to define own interrupt handlers.
+* Global raspberri pi timer.
+* Arm-side timer with interrupts.
+* Minimal processes support. All of them running in the same address space.
+* Minimal semaphores implementation.
+* Caches and virtual memory is not supported yet.
+
 = HOW TO COMPILE =
 
 You need to install arm crosscompiler arm-none-eabi-gcc package to be able to compile the sources.
