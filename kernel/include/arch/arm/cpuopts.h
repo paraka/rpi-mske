@@ -22,4 +22,16 @@ static inline void write_vbar(u32 *vbar)
     dsb();
 }
 
+static inline u32 read_cpsr(void)
+{
+    u32 cpsr;
+    asm volatile (" mrs  %0, cpsr" : "=r" (cpsr) : /* no inputs */  );
+    return cpsr;
+}
+
+static inline void write_cpsr(u32 cpsr)
+{
+    asm volatile (" msr  cpsr, %0" : /* no outputs */ : "r" (cpsr));
+}
+
 #endif /* _CPUOPS_H_ */
