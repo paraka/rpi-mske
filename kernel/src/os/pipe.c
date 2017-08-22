@@ -2,9 +2,11 @@
 #include <os/task.h>
 #include <os/pipe.h>
 
-static u32 pipe_index = 0;
+#define NUM_PIPES   128
 
-mske_pipe_t pipes[NUM_PIPES];
+static mske_pipe_t pipes[NUM_PIPES]; /* pipes in the system */
+
+static u32 pipe_index = 0;
 
 mske_pipe_t *mske_create_pipe(void)
 {
