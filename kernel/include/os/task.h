@@ -23,6 +23,7 @@ typedef struct task_struct
     mske_task_status_t status; /* status of the process */
     u32 pid; /* process identifier */
     u32 priority; /* process priority */
+    u32 event; /* sleep / wake_up syncronization */
     u32 kstack[TASK_STACK_SIZE]; /* execution stack of the process */
 } mske_task_t;
 
@@ -38,5 +39,7 @@ int kfork(u32 func, int priority);
 void kexit(void);
 void context_switch(void);
 void scheduler(void);
+void sleep(u32 event);
+void wake_up(u32 event);
 
 #endif /* TASK_H_ */

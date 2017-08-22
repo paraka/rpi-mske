@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <arch/arm/cpuopts.h>
 #include <common/defs.h>
 #include <irq/irq.h>
 #include <timer/timer.h>
@@ -107,4 +108,40 @@ void scheduler(void)
         put_task_in_list(&task_ready_queue, running);
 
     running = get_task_from_list(&task_ready_queue);
+}
+
+void sleep(u32 event)
+{
+    u32 cpsr = read_cpsr();
+    disable_irqs();
+
+    running->event = event;
+    running->status = DORMANT;
+    context_switch();
+    
+    enable_irqs();
+    write_cpsr(cpsr);
+}
+
+void wake_up(u32 event)
+{
+    int i = 0;
+    mske_task_t *p;
+
+    u32 cpsr = read_cpsr();
+    disable_irqs();
+
+    for (i = 0; i < NUMBER_OF_PROCESS; i++)
+    {
+        p = &proc[i];
+
+        if (p->status == DORMANT && p->event == event)
+        {
+            p->status = READY;
+            put_task_in_list(&task_ready_queue, p);
+        }
+    }
+    
+    enable_irqs();
+    write_cpsr(cpsr);
 }
