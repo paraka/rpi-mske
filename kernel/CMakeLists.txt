@@ -48,7 +48,8 @@ set(KERNEL_MAIN_FILE "src/init/kernel.c")
 
 set(OS_SRCS "src/os/task.c"
             "src/os/queue.c"
-            "src/os/semaphore.c")
+            "src/os/semaphore.c"
+            "src/os/pipe.c")
 
 set(KERNEL_SOURCES 
     ${BOOT_SRC}
