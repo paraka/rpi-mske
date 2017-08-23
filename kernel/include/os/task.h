@@ -23,7 +23,7 @@ typedef struct task_struct
     mske_task_status_t status; /* status of the process */
     u32 pid; /* process identifier */
     u32 priority; /* process priority */
-    u32 event; /* sleep / wake_up syncronization */
+    s32 event; /* sleep / wake_up syncronization */
     u32 kstack[TASK_STACK_SIZE]; /* execution stack of the process */
 } mske_task_t;
 
@@ -34,12 +34,11 @@ extern mske_task_t *task_ready_queue;
 extern mske_task_t *task_free_list;
 
 void kernel_process_init(void);
-u32 dummy_task_entry_point(void *arg);
-int kfork(u32 func, int priority);
-void kexit(void);
+int mske_create_task(u32 func, int priority);
+void mske_exit_task(void);
 void context_switch(void);
 void scheduler(void);
-void sleep(u32 event);
-void wake_up(u32 event);
+void sleep(s32 event);
+void wake_up(s32 event);
 
 #endif /* TASK_H_ */

@@ -16,37 +16,16 @@ mske_task_t proc[NUMBER_OF_PROCESS];
 mske_task_t *running;
 mske_task_t *task_free_list, *task_ready_queue;
 
+extern void tswitch(void); /* defined in boot.s */
+
 void context_switch(void)
 {
-    extern void tswitch(void); /* defined in boot.s */
     disable_irqs();
     tswitch();
     enable_irqs();
 }
 
-u32 dummy_task_entry_point(void *arg)
-{
-    u8 c;
-    UNUSED(arg);
-
-    printk("%s: task %d was resumed\n", __func__, running->pid);
-
-    while(1)
-    {
-        printk("%s: current task %d -> action [s|f|x] (s: context switch | f: fork | x: exit ) : \n", __func__, running->pid);
-        uart_read(uart_dev_id, &c, 1);
-        switch(c)
-        {
-            case 's': context_switch();                         break;
-            case 'f': kfork((u32)dummy_task_entry_point, 1);    break;
-            case 'x': kexit();                                  break;
-        }
-    }
-
-    return 0;
-}
-
-int kfork(u32 func, int priority)
+int mske_create_task(u32 func, int priority)
 {
     int i;
     mske_task_t *p = get_task_from_list(&task_free_list);
@@ -70,7 +49,7 @@ int kfork(u32 func, int priority)
     return p->pid;
 }
 
-void kexit(void)
+void mske_exit_task(void)
 {
     printk("task %d exit\n", running->pid);
     running->status = DORMANT;
@@ -87,6 +66,7 @@ void kernel_process_init(void)
     {
         p = &proc[i];
         p->pid = i;
+        p->event = -1;
         p->status = DORMANT;
         p->next = p + 1; /* point to next task */
     }
@@ -110,20 +90,21 @@ void scheduler(void)
     running = get_task_from_list(&task_ready_queue);
 }
 
-void sleep(u32 event)
+void sleep(s32 event)
 {
     u32 cpsr = read_cpsr();
     disable_irqs();
 
     running->event = event;
     running->status = DORMANT;
-    context_switch();
+
+    tswitch();
     
     enable_irqs();
     write_cpsr(cpsr);
 }
 
-void wake_up(u32 event)
+void wake_up(s32 event)
 {
     int i = 0;
     mske_task_t *p;
@@ -139,6 +120,7 @@ void wake_up(u32 event)
         {
             p->status = READY;
             put_task_in_list(&task_ready_queue, p);
+            context_switch();
         }
     }
     
