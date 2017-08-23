@@ -17,7 +17,9 @@ mske_pipe_t *mske_create_pipe(void)
 
     ret->status = FREE;    
     ret->head = ret->tail = 0;
-    ret->data = ret->room = 0;
+    ret->data = 0;
+    ret->room = PIPE_SIZE;
+    ret->nreaders = ret->nwriters = 0;
     pipe_index++;
 
     return ret;
@@ -27,12 +29,19 @@ s32 mske_write_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
 {
     int r = 0;
     char *buffer = (char *)buf;
+
     if (bytes <= 0) return MSKE_OS_OK;
 
     if (!pipe) return -MSKE_OS_INVALID;
-
+    
     while(bytes)
     {
+        if (!pipe->nreaders) /* no more readers */
+        {
+            //mske_exit_task();
+            return MSKE_OS_OK;
+        }
+
         while(pipe->room)
         {
             pipe->buf[pipe->head++] = *buffer++; /* write a byte */
@@ -42,7 +51,8 @@ s32 mske_write_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
         }
         
         wake_up(pipe->data); /* wake up readers if any */
-        if (bytes == 0) return r; /* finished writting bytes */
+        if (bytes == 0)
+            return r; /* finished writting bytes */
         /* still has data but pipe has no room */
         sleep(pipe->room);
     }
@@ -67,10 +77,23 @@ s32 mske_read_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
             pipe->data--; pipe->room++; r++; bytes--;
             if (bytes == 0) break;
         }
-        wake_up(pipe->room); /* wake up writters */
-        if (r) return r;
+        /* has read some data */
+        if (r) 
+        {
+            wake_up(pipe->room); /* wake up writters */
+            return r;
+        }
         /* pipe has no data */
-        sleep(pipe->data);
+        if (pipe->nwriters)
+        {
+            wake_up(pipe->room);
+            /* TODO: not sure about this */
+            if (r == 0) sleep(bytes);
+            else sleep(pipe->data);
+            continue;
+        }
+        /* pipe has no writter and no data */
+        return MSKE_OS_OK;
     }
 
     return MSKE_OS_OK;
