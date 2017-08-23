@@ -17,12 +17,15 @@
 #include <timer/timer.h>
 #include <timer/arm_timer.h>
 #include <os/task.h>
+#include <os/pipe.h>
 
 #if defined(__cplusplus)
 extern "C" /* Use C linkage for kernel_main. */
 #endif
 
 #define MAX_EXEC_TIMES  10
+
+static mske_pipe_t *kpipe;
 
 static void arm_timer_irq_handler(void *param)
 {
@@ -123,6 +126,47 @@ void clear_bss(void)
         *bss++ = 0;
 }
 
+u32 pipe_writer(void *arg)
+{
+    UNUSED(arg);
+    static const char *line = "Message to print in the pipe";
+    static int times = 0;
+    
+    while(1)
+    {
+        if (times == MAX_EXEC_TIMES) break;
+
+        printk("%s: Write in pipe %s\n", __func__, line);
+        mske_write_pipe(kpipe, (void *)line, sizeof("Message to print in the pipe"));
+        times++;
+    }
+
+    mske_exit_task();
+
+    return 0;
+}
+
+u32 pipe_reader(void *arg)
+{
+    UNUSED(arg);
+    char line[128];
+    s32 bytes = 0;
+    static int times = 0;
+
+    while(1)
+    {
+        if (times == MAX_EXEC_TIMES) break;
+
+        bytes = mske_read_pipe(kpipe, (void *)line, 29);
+        printk("%s: Received in pipe %s (bytes=%d)\n", __func__, line, bytes);
+        times++;
+    }
+
+    mske_exit_task();
+
+    return 0;
+}
+
 void kernel_main(u32 r0, u32 r1, u32 atags)
 {
     UNUSED(r0);
@@ -151,12 +195,20 @@ void kernel_main(u32 r0, u32 r1, u32 atags)
 
     enable_irqs();
 
+    usleep(3000000);
+
+    kpipe = mske_create_pipe();
+    kpipe->nreaders = 1;
+    kpipe->nwriters = 1;
+
     kernel_process_init();
-    kfork((u32)dummy_task_entry_point, 1); /* P0 create P1 in ready queue */
+
+    mske_create_task((u32)pipe_reader, 1);
+    mske_create_task((u32)pipe_writer, 1);
 
     while(1)
     {
-        while(task_ready_queue == 0); /* P0 loops if task_ready_queue is empty */
-        context_switch();
+        if (task_ready_queue)
+            context_switch();
     }
 }
