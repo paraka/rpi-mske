@@ -66,7 +66,7 @@ void kernel_process_init(void)
     {
         p = &proc[i];
         p->pid = i;
-        p->event = -1;
+        p->event = 0x00000000;
         p->status = DORMANT;
         p->next = p + 1; /* point to next task */
     }
@@ -90,12 +90,12 @@ void scheduler(void)
     running = get_task_from_list(&task_ready_queue);
 }
 
-void sleep(s32 event)
+void sleep(u32 event)
 {
     u32 cpsr = read_cpsr();
     disable_irqs();
 
-    running->event = event;
+    running->event |= event;
     running->status = DORMANT;
 
     tswitch();
@@ -104,7 +104,7 @@ void sleep(s32 event)
     write_cpsr(cpsr);
 }
 
-void wake_up(s32 event)
+void wake_up(u32 event)
 {
     int i = 0;
     mske_task_t *p;
@@ -116,7 +116,7 @@ void wake_up(s32 event)
     {
         p = &proc[i];
 
-        if (p->status == DORMANT && p->event == event)
+        if (p->status == DORMANT && p->event & event)
         {
             p->status = READY;
             put_task_in_list(&task_ready_queue, p);

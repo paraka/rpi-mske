@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <os/task.h>
+#include <os/events.h>
 #include <os/pipe.h>
 
 #define NUM_PIPES   128
@@ -50,11 +51,11 @@ s32 mske_write_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
             if (bytes == 0) break;
         }
         
-        wake_up(pipe->data); /* wake up readers if any */
+        wake_up(WAIT_FOR_DATA_PIPE); /* wake up readers if any */
         if (bytes == 0)
             return r; /* finished writting bytes */
         /* still has data but pipe has no room */
-        sleep(pipe->room);
+        sleep(WAIT_FOR_ROOM_PIPE);
     }
 
     return MSKE_OS_OK;
@@ -64,6 +65,7 @@ s32 mske_read_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
 {
     int r = 0;
     char *buffer = (char *)buf;
+
     if (bytes <= 0) return MSKE_OS_OK;
 
     if (!pipe) return -MSKE_OS_INVALID;
@@ -80,16 +82,14 @@ s32 mske_read_pipe(mske_pipe_t *pipe, void *buf, u32 bytes)
         /* has read some data */
         if (r) 
         {
-            wake_up(pipe->room); /* wake up writters */
+            wake_up(WAIT_FOR_ROOM_PIPE); /* wake up writters */
             return r;
         }
         /* pipe has no data */
         if (pipe->nwriters)
         {
-            wake_up(pipe->room);
-            /* TODO: not sure about this */
-            if (r == 0) sleep(bytes);
-            else sleep(pipe->data);
+            wake_up(WAIT_FOR_ROOM_PIPE);
+            sleep(WAIT_FOR_DATA_PIPE);
             continue;
         }
         /* pipe has no writter and no data */
