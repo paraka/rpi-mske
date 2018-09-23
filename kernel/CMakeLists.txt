@@ -22,6 +22,7 @@ message(STATUS "Building at ${KERNEL_BUILD_TIME}")
 # Flags
 #############################
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -O2 -Wall -Wextra -nostdlib")
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -mcpu=arm1176jzf-s")
 
 #############################
 # Sources
@@ -32,6 +33,7 @@ set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/src/kernel.ld)
 set(CMAKE_EXE_LINKER_FLAGS "-T ${LINKER_SCRIPT}")
 
 file(GLOB KLIBC_SRC  "src/klibc/src/*.c")
+file(GLOB MM_SRCS "src/mm/*.c")
 set(BOOT_SRC "src/init/boot.s")
 set(COMMON_SRC "src/common/device.c" 
                "src/common/panic.c")
@@ -52,6 +54,7 @@ set(OS_SRCS "src/os/task.c"
             "src/os/pipe.c")
 
 set(KERNEL_SOURCES 
+    ${MM_SRCS}
     ${BOOT_SRC}
     ${COMMON_SRC}
     ${GPIO_SRC}
@@ -66,6 +69,8 @@ set(KERNEL_SOURCES
     ${ATAGS_FILE}
     ${OS_SRCS}
     ${KERNEL_MAIN_FILE})
+
+set_source_files_properties(${BOOT_SRC} PROPERTIES COMPILE_FLAGS "-x assembler-with-cpp")
 
 add_executable(${BINARY_NAME} ${KERNEL_SOURCES})
 

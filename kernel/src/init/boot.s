@@ -1,3 +1,5 @@
+#include <mm/mm.h>
+
 .section ".text.boot"
 
 .global _start, vectors_start, vectors_end
@@ -47,11 +49,15 @@ vectors_end:
 
 handler_reset:
     // set SVC stack to first process high end
-    ldr r0, =proc
-    ldr r1, =TASK_SIZE
-    ldr r2, [r1, #0]
-    add r0, r0, r2
-    mov sp, r0
+    ldr sp, =__svc_stack_top
+
+    bl enable_paging
+
+    #ldr r0, =proc
+    #ldr r1, =TASK_SIZE
+    #ldr r2, [r1, #0]
+    #add r0, r0, r2
+    #mov sp, r0
 
     // copy exception table to 0x0
     bl copy_vector_table
@@ -91,6 +97,62 @@ handler_reset:
 _halt:
     wfe // wait for events
     b _halt
+
+.global read_cache_type
+read_cache_type:
+    mrc p15, 0, r0, cr0, cr0, 1
+    mov pc, lr
+
+.global read_tcm_type
+read_tcm_type:
+    mrc p15, 0, r0, cr0, cr0, 2
+    mov pc, lr
+
+.global read_tlb_type
+read_tlb_type:
+    mrc p15, 0, r0, cr0, cr0, 3
+    mov pc, lr
+
+.global read_control_register
+read_control_register:
+    mrc p15, 0, r0, cr1, cr0, 0
+    mov pc, lr
+
+.global set_control_register
+set_control_register:
+    mcr p15, 0, r0, cr1, cr0, 0
+    mov pc, lr
+
+.global set_domain_access_control
+set_domain_access_control:
+    mcr p15, 0, r0, cr3, cr0, 0
+    mov pc, lr
+
+.global set_translation_table_base
+set_translation_table_base:
+    mcr p15, 0, r0, cr2, cr0, 0
+    mov pc, lr
+
+.global jump_to_high_mem
+jump_to_high_mem:
+    add lr, #KERNEL_BASE
+    mov pc, lr
+
+enable_paging:
+    mov r2, lr
+
+    mov r0, #1
+    bl set_domain_access_control
+
+    ldr r0, =startup_sectiontable
+    sub r0, #KERNEL_BASE
+    bl set_translation_table_base
+
+    bl read_control_register
+    orr r0, #1
+    bl set_control_register
+
+    mov pc, r2
 
 tswitch:
     stmfd sp!, {r0-r12, lr}
